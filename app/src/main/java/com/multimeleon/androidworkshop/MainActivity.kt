@@ -18,6 +18,8 @@ class MainActivity : AppCompatActivity() {
         val animals = listOf("Lion", "rabbit")
         dashboard_recyclerview.adapter = AnimalAdapter(animals)
         bindDataFromService()
+
+        bindServiceCallToForRepo()
     }
 
     private fun bindDataFromService() {
@@ -33,6 +35,25 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onFailure(call: Call<SearchRepoResponse>?, t: Throwable?) {
+                        print(t!!.message)
+                    }
+
+                })
+    }
+
+    private fun bindServiceCallToForRepo() {
+        Network("https://api.github.com/", true)
+                .getRetrofitClient()
+                .create(Endpoint::class.java)
+                .searchRepo("Android", "stars", "desc").enqueue(object : Callback<SearchResponse> {
+
+                    override fun onResponse(call: Call<SearchResponse>?, response: Response<SearchResponse>?) {
+                        if (response!!.isSuccessful) {
+                            print(response.body()!!.searchResults!!.map { it.name })
+                        }
+                    }
+
+                    override fun onFailure(call: Call<SearchResponse>?, t: Throwable?) {
                         print(t!!.message)
                     }
 

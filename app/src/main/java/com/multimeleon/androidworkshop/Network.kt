@@ -71,4 +71,15 @@ internal interface Endpoint {
             @Query("sort") sort: String,
             @Query("order") order: String
     ): Call<SearchRepoResponse>
+
+
+    @Headers("Accept: application/vnd.github.v3+json")
+    @GET("search/repositories")
+    fun searchRepo(
+            @Query("q") query: String,
+            @Query("sort") sort: String,
+            @Query("order") order: String
+    ): Call<SearchResponse>
+
+
 }
