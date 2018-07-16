@@ -1,27 +1,52 @@
 package com.multimeleon.androidworkshop
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.GridLayoutManager
+import kotlinx.android.synthetic.main.activity_main.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setupRecyclerView()
+        val animals = listOf("Lion", "rabbit")
+        dashboard_recyclerview.adapter = AnimalAdapter(animals)
+        bindDataFromService()
+    }
 
-        dashboard_recyclerView.adapter = DashboardAdapter(plants = it, clickListener = {
-            plantItemClicked(it)
-        })
+    private fun bindDataFromService() {
+        Network("https://api.github.com/", true)
+                .getRetrofitClient()
+                .create(Endpoint::class.java)
+                .searchUser("hello", "followers", "desc").enqueue(object : Callback<SearchRepoResponse> {
+
+                    override fun onResponse(call: Call<SearchRepoResponse>?, response: Response<SearchRepoResponse>?) {
+                        if (response!!.isSuccessful) {
+                            dashboard_recyclerview.adapter = AnimalAdapter(response?.body()?.items!!.map { it.login })
+                        }
+                    }
+
+                    override fun onFailure(call: Call<SearchRepoResponse>?, t: Throwable?) {
+                        print(t!!.message)
+                    }
+
+                })
+    }
+
+    private fun showImage(url: String) {
+//        Glide.with(this)
+//                .load(url)
+//                .into(image)
     }
 
     private fun setupRecyclerView() {
-        dashboard_recyclerView.layoutManager = GridLayoutManager(this, 2)
-        this.bindData()
-    }
+        dashboard_recyclerview.layoutManager = GridLayoutManager(this, 2)
 
-    private fun plantItemClicked(plant: Plant) {
-        Intent(this, PlantDetailActivity::class.java).addData(mapOf(PlantId to plant.id)) {
-            navigateWith(this@DashboardActivity)
-        }
     }
 }

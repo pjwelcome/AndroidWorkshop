@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.animal_list_item.view.*
 
 
-class AnimalAdapter(val items: ArrayList<String>) : RecyclerView.Adapter<ViewHolder>() {
+class AnimalAdapter(val items: List<String>) : RecyclerView.Adapter<ViewHolder>() {
 
     // Gets the number of animals in the list
     override fun getItemCount(): Int {
@@ -30,6 +30,9 @@ class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     // Holds the TextView that will add each animal to
     val tvAnimalType = view.tv_animal_type
 }
+
+
+
 
 //class DashboardAdapter(private val plants: List<Plant>, private val clickListener: (Plant) -> Unit) : RecyclerView.Adapter<PlantDashboardViewHolder>() {
 //
